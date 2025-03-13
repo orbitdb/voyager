@@ -18,11 +18,13 @@ const createRPCIdentity = async ({ id, directory }) => {
   const keystore = await KeyStore({ path: join(rpcPath(directory), 'keystore') })
   const identities = await Identities({ keystore })
   const identity = await identities.createIdentity({ id })
+  const keyPair = await keystore.getKey(id)
   await keystore.close()
   return {
     id: identity.id,
     hash: identity.hash,
-    publicKey: identity.publicKey
+    publicKey: identity.publicKey,
+    keyPair: keyPair
   }
 }
 
@@ -53,7 +55,8 @@ export default async ({ options }) => {
   const blockstore = new LevelBlockstore(join(hostDirectory, '/', 'ipfs', '/', 'blocks'))
   const datastore = new LevelDatastore(join(hostDirectory, '/', 'ipfs', '/', 'data'))
 
-  const libp2p = await createLibp2p(libp2pConfig({ port: options.port, websocketPort: options.wsport }))
+  const authorizedRPCIdentity = await createRPCIdentity({ id: rpcId, directory: options.directory })
+  const libp2p = await createLibp2p(libp2pConfig({ privateKey: authorizedRPCIdentity.keyPair, port: options.port, websocketPort: options.wsport }))
 
   log('peerid:', libp2p.peerId.toString())
 
@@ -68,8 +71,6 @@ export default async ({ options }) => {
   const ipfs = await createHelia({ libp2p, datastore, blockstore })
   const orbitdb = await createOrbitDB({ ipfs, directory: hostDirectory, id: hostId })
   const host = await Host({ defaultAccess, verbose: options.verbose, orbitdb })
-
-  const authorizedRPCIdentity = await createRPCIdentity({ id: rpcId, directory: options.directory })
 
   const rpcConfig = {
     address: host.orbitdb.ipfs.libp2p.getMultiaddrs().shift(), // get 127.0.0.1 address
