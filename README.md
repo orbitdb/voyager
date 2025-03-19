@@ -60,6 +60,8 @@ VOYAGER_PATH=/path/to/voyager voyager daemon
 #### Command Line Options
 
 Voyager daemon supports several command line options:
+**Help
+- `--help, -h`: Shows command line help
 
 **Port Configuration**
 - `--port, -p`: The port to listen on for the libp2p TCP transport. Defaults to 0 (random available port).
