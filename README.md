@@ -60,7 +60,7 @@ VOYAGER_PATH=/path/to/voyager voyager daemon
 #### Command Line Options
 
 Voyager daemon supports several command line options:
-**Help
+**Help***
 - `--help, -h`: Shows command line help
 
 **Port Configuration**
