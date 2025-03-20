@@ -57,6 +57,33 @@ voyager daemon -d /path/to/voyager
 VOYAGER_PATH=/path/to/voyager voyager daemon
 ```
 
+#### Command Line Options
+
+Voyager daemon supports several command line options:
+
+**Help**
+- `--help, -h`: Shows command line help
+
+**Port Configuration**
+- `--port, -p`: The port to listen on for the libp2p TCP transport. Defaults to 0 (random available port).
+- `--wsport, -w`: The port to listen on for WebSockets. Defaults to 0 (random available port).
+
+**Logging**
+- `--verbose, -v`: Enable verbose logging. Use multiple times (e.g., `-vvv`) for increased verbosity.
+
+**Access Control**
+- `--allow, -a`: Allow anyone to add a database. The default is false (deny all except explicitly authorized users).
+
+**Storage Location**
+- `--directory, -d`: Specify a directory to store Voyager, IPFS, and OrbitDB data. You can also use the `VOYAGER_PATH` environment variable.
+
+**Example with multiple options:**
+```sh
+voyager daemon -p 9090 -w 9091 -vvv --allow
+```
+
+
+
 ### Docker
 
 You can run an Voyager storage service using a pre-configured Docker image.

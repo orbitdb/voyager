@@ -1,21 +1,32 @@
-import { promises as fs } from 'fs'
-import { mkdir } from 'node:fs/promises'
-import { join } from 'path'
+const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined'
 
-const configPath = (path) => join(path, 'config.json')
+let fs, mkdir, join
+if (!isBrowser) {
+  // Dynamic imports for Node.js environment, so it does not disturb browsers
+  const promises = await import('fs').then(module => module.promises)
+  const fsPromises = await import('node:fs/promises')
+  const path = await import('path')
 
-export const saveConfig = async ({ path, config }) => {
+  fs = promises
+  mkdir = fsPromises.mkdir
+  join = path.join
+}
+
+const nodeConfigPath = (path) => join(path, 'config.json')
+
+const nodeSaveConfig = async ({ path, config }) => {
   await mkdir(path, { recursive: true })
-  path = configPath(path)
+  const configFilePath = nodeConfigPath(path)
   const data = JSON.stringify(config)
 
-  await fs.writeFile(path, data, { flags: 'w' })
+  await fs.writeFile(configFilePath, data, { flags: 'w' })
 }
 
-export const loadConfig = async ({ path }) => {
-  path = configPath(path)
-
-  const config = JSON.parse(await fs.readFile(path))
-
+const nodeLoadConfig = async ({ path }) => {
+  const configFilePath = nodeConfigPath(path)
+  const config = JSON.parse(await fs.readFile(configFilePath))
   return config
 }
+
+export const saveConfig = nodeSaveConfig
+export const loadConfig = nodeLoadConfig
