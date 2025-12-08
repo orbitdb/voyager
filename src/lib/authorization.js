@@ -1,4 +1,4 @@
-import { Set } from '@orbitdb/set-db'
+import { SetDb } from '@orbitdb/set-db'
 import { useDatabaseType } from '@orbitdb/core'
 
 export const Access = Object.freeze({
@@ -9,7 +9,7 @@ export const Access = Object.freeze({
 export default async ({ orbitdb, defaultAccess }) => {
   defaultAccess = defaultAccess || Access.DENY
 
-  useDatabaseType(Set)
+  useDatabaseType(SetDb)
 
   const access = await orbitdb.open('access', { type: 'set' })
 
